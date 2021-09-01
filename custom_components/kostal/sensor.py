@@ -12,7 +12,6 @@ from homeassistant.const import (
     CONF_HOST,
     CONF_MONITORED_CONDITIONS,
     DEVICE_CLASS_ENERGY,
-    ENERGY_WATT_HOUR,
 )
 
 from homeassistant.components.sensor import (
@@ -58,7 +57,7 @@ class PikoInverter(SensorEntity):
         self._icon = SENSOR_TYPES[self.type][2]
         self.serial_number = None
         self.model = None
-        if self._unit_of_measurement == ENERGY_WATT_HOUR:
+        if self._unit_of_measurement == ENERGY_KILO_WATT_HOUR:
             self._attr_state_class = STATE_CLASS_MEASUREMENT
             self._attr_device_class = DEVICE_CLASS_ENERGY
             self._attr_last_reset = dt.utc_from_timestamp(0)
