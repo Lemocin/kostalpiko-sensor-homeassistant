@@ -11,11 +11,18 @@ from homeassistant.const import (
     CONF_PASSWORD,
     CONF_HOST,
     CONF_MONITORED_CONDITIONS,
+    DEVICE_CLASS_ENERGY,
+    ENERGY_WATT_HOUR,
+)
+
+from homeassistant.components.sensor import (
+    STATE_CLASS_MEASUREMENT,
+    SensorEntity,
 )
 
 from homeassistant.helpers.entity import Entity
-from homeassistant.util import Throttle
-
+from homeassistant.util import Throttle, dt
+from datetime import datetime
 
 from .const import SENSOR_TYPES, MIN_TIME_BETWEEN_UPDATES, DOMAIN
 
@@ -37,7 +44,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
     async_add_entities(entities)
 
 
-class PikoInverter(Entity):
+class PikoInverter(SensorEntity):
     """Representation of a Piko inverter."""
 
     def __init__(self, piko_data, sensor_type, name):
@@ -51,6 +58,10 @@ class PikoInverter(Entity):
         self._icon = SENSOR_TYPES[self.type][2]
         self.serial_number = None
         self.model = None
+        if self._unit_of_measurement == ENERGY_WATT_HOUR:
+            self._attr_state_class = STATE_CLASS_MEASUREMENT
+            self._attr_device_class = DEVICE_CLASS_ENERGY
+            self._attr_last_reset = dt.utc_from_timestamp(0)
         self.update()
 
     @property
